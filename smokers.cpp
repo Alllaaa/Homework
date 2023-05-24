@@ -27,6 +27,10 @@ int main()
 key_t key=ftok("t",1);
 int sem_id = semget(key,4,IPC_CREAT|0666);
 // 0 mutex, 1 t, 2 p, 3 s 
+ semctl(sem_id, 1, SETVAL,0 );
+ semctl(sem_id, 2, SETVAL, 0);
+ semctl(sem_id, 3, SETVAL, 0); 
+ semctl(sem_id, 0, SETVAL, 0); 
     // Создание процессов для курильщиков
     pid_t pidT, pidP, pidM;
     pidT = fork();
@@ -66,6 +70,7 @@ int sem_id = semget(key,4,IPC_CREAT|0666);
                 }
             } 
 // Бармен
+semctl(sem_id, 0, SETVAL,1); 
 char command;
 while (std::cin >> command) {
 wait_sem(sem_id,0);
