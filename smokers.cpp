@@ -30,18 +30,18 @@ int sem_id = semget(key,4,IPC_CREAT|0666);
  semctl(sem_id, 1, SETVAL,0 );
  semctl(sem_id, 2, SETVAL, 0);
  semctl(sem_id, 3, SETVAL, 0); 
- semctl(sem_id, 0, SETVAL, 0); 
+ semctl(sem_id, 0, SETVAL, 1); 
     // Создание процессов для курильщиков
     pid_t pidT, pidP, pidM;
     pidT = fork();
     if (pidT == 0) {
         // Курильщик T
         while (true) {
-            wait_sem(sem_id,0);
             wait_sem(sem_id,1);
+            wait_sem(sem_id,0);
             std::cout << "T" << std::endl;
-            signal_sem(sem_id,1);
             signal_sem(sem_id,0);
+            signal_sem(sem_id,1);
             sleep(1);
         }
     } 
@@ -49,11 +49,11 @@ int sem_id = semget(key,4,IPC_CREAT|0666);
     if (pidP == 0) {
             // Курильщик P
             while (true) {
-            wait_sem(sem_id,0);
             wait_sem(sem_id,2);
+            wait_sem(sem_id,0);
             std::cout << "P" << std::endl;
-            signal_sem(sem_id,2);
             signal_sem(sem_id,0);
+            signal_sem(sem_id,2);
             sleep(1);
             }
         } 
@@ -61,16 +61,16 @@ int sem_id = semget(key,4,IPC_CREAT|0666);
      if (pidM == 0) {
                 // Курильщик M
                 while (true) {
-                    wait_sem(sem_id,0);
                     wait_sem(sem_id,3);
+                    wait_sem(sem_id,0);
                     std::cout << "M" << std::endl;
-                    signal_sem(sem_id,3);
                     signal_sem(sem_id,0);
+                    signal_sem(sem_id,3);
                     sleep(1);
                 }
             } 
 // Бармен
-semctl(sem_id, 0, SETVAL,1); 
+ 
 char command;
 while (std::cin >> command) {
 wait_sem(sem_id,0);
